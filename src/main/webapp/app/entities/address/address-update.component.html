@@ -1,0 +1,103 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-address-heading" jhiTranslate="jhipsterSampleApplicationApp.address.home.createOrEditLabel">Create or edit a Address</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.typeOfVia" for="field_typeOfVia">Type Of Via</label>
+                    <select class="form-control" name="typeOfVia" formControlName="typeOfVia" id="field_typeOfVia">
+                        <option value="STREET">{{ 'jhipsterSampleApplicationApp.ViaType.STREET' | translate }}</option>
+                        <option value="SQUARE">{{ 'jhipsterSampleApplicationApp.ViaType.SQUARE' | translate }}</option>
+                        <option value="BOULEVARD">{{ 'jhipsterSampleApplicationApp.ViaType.BOULEVARD' | translate }}</option>
+                        <option value="ROAD">{{ 'jhipsterSampleApplicationApp.ViaType.ROAD' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('typeOfVia')!.invalid && (editForm.get('typeOfVia')!.dirty || editForm.get('typeOfVia')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('typeOfVia')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.name" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                           formControlName="name"/>
+                    <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.zipCode" for="field_zipCode">Zip Code</label>
+                    <input type="text" class="form-control" name="zipCode" id="field_zipCode"
+                           formControlName="zipCode"/>
+                    <div *ngIf="editForm.get('zipCode')!.invalid && (editForm.get('zipCode')!.dirty || editForm.get('zipCode')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('zipCode')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.areaDisctrict" for="field_areaDisctrict">Area Disctrict</label>
+                    <select class="form-control" name="areaDisctrict" formControlName="areaDisctrict" id="field_areaDisctrict">
+                        <option value="WEST_BAY">{{ 'jhipsterSampleApplicationApp.AreaDisctrict.WEST_BAY' | translate }}</option>
+                        <option value="GEORGE_TOWN">{{ 'jhipsterSampleApplicationApp.AreaDisctrict.GEORGE_TOWN' | translate }}</option>
+                        <option value="BODDEN_TOWN">{{ 'jhipsterSampleApplicationApp.AreaDisctrict.BODDEN_TOWN' | translate }}</option>
+                        <option value="NORTH_SIDE">{{ 'jhipsterSampleApplicationApp.AreaDisctrict.NORTH_SIDE' | translate }}</option>
+                        <option value="EAST_END">{{ 'jhipsterSampleApplicationApp.AreaDisctrict.EAST_END' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('areaDisctrict')!.invalid && (editForm.get('areaDisctrict')!.dirty || editForm.get('areaDisctrict')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('areaDisctrict')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.lat" for="field_lat">Lat</label>
+                    <input type="number" class="form-control" name="lat" id="field_lat"
+                           formControlName="lat"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.lon" for="field_lon">Lon</label>
+                    <input type="number" class="form-control" name="lon" id="field_lon"
+                           formControlName="lon"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.address.advertisment" for="field_advertisment">Advertisment</label>
+                    <select class="form-control" id="field_advertisment" name="advertisment" formControlName="advertisment">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="advertismentOption.id === editForm.get('advertisment')!.value?.id ? editForm.get('advertisment')!.value : advertismentOption" *ngFor="let advertismentOption of advertisments; trackBy: trackById">{{ advertismentOption.id }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

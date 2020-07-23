@@ -1,0 +1,31 @@
+{
+  "jhipsterSampleApplicationApp": {
+    "feature": {
+      "home": {
+        "title": "Features",
+        "createLabel": "Create a new Feature",
+        "createOrEditLabel": "Create or edit a Feature",
+        "notFound": "No Features found"
+      },
+      "created": "A new Feature is created with identifier {{ param }}",
+      "updated": "A Feature is updated with identifier {{ param }}",
+      "deleted": "A Feature is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Feature {{ id }}?"
+      },
+      "detail": {
+        "title": "Feature"
+      },
+      "numberBedrooms": "Number Bedrooms",
+      "numberBathroom": "Number Bathroom",
+      "fullKitchen": "Full Kitchen",
+      "elevator": "Elevator",
+      "parking": "Parking",
+      "airConditionair": "Air Conditionair",
+      "backyard": "Backyard",
+      "pool": "Pool",
+      "m2": "M 2",
+      "advertisment": "Advertisment"
+    }
+  }
+}

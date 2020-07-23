@@ -1,0 +1,83 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="jhipsterSampleApplicationApp.feature.home.title">Features</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-feature" [routerLink]="['/feature/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="jhipsterSampleApplicationApp.feature.home.createLabel">
+            Create a new Feature
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="features?.length === 0">
+        <span jhiTranslate="jhipsterSampleApplicationApp.feature.home.notFound">No features found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="features && features.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr>
+                    <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.numberBedrooms">Number Bedrooms</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.numberBathroom">Number Bathroom</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.fullKitchen">Full Kitchen</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.elevator">Elevator</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.parking">Parking</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.airConditionair">Air Conditionair</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.backyard">Backyard</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.pool">Pool</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.m2">M 2</span></th>
+                    <th scope="col" ><span jhiTranslate="jhipsterSampleApplicationApp.feature.advertisment">Advertisment</span></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let feature of features ;trackBy: trackId">
+                    <td><a [routerLink]="['/feature', feature.id, 'view']">{{ feature.id }}</a></td>
+                    <td>{{ feature.numberBedrooms }}</td>
+                    <td>{{ feature.numberBathroom }}</td>
+                    <td>{{ feature.fullKitchen }}</td>
+                    <td>{{ feature.elevator }}</td>
+                    <td>{{ feature.parking }}</td>
+                    <td>{{ feature.airConditionair }}</td>
+                    <td>{{ feature.backyard }}</td>
+                    <td>{{ feature.pool }}</td>
+                    <td>{{ feature.m2 }}</td>
+                    <td>
+                        <div *ngIf="feature.advertisment">
+                            <a [routerLink]="['/advertisment', feature.advertisment?.id, 'view']" >{{ feature.advertisment?.id }}</a>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/feature', feature.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/feature', feature.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(feature)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

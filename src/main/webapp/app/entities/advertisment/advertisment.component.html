@@ -1,0 +1,89 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="jhipsterSampleApplicationApp.advertisment.home.title">Advertisments</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-advertisment" [routerLink]="['/advertisment/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="jhipsterSampleApplicationApp.advertisment.home.createLabel">
+            Create a new Advertisment
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="advertisments?.length === 0">
+        <span jhiTranslate="jhipsterSampleApplicationApp.advertisment.home.notFound">No advertisments found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="advertisments && advertisments.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="description"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.description">Description</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="createAt"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.createAt">Create At</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="modifiedAt"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.modifiedAt">Modified At</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="typeAd"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.typeAd">Type Ad</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="propertyType"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.propertyType">Property Type</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="active"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.active">Active</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="price"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.price">Price</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="reference"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.reference">Reference</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="user.id"><span jhiTranslate="jhipsterSampleApplicationApp.advertisment.user">User</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let advertisment of advertisments ;trackBy: trackId">
+                    <td><a [routerLink]="['/advertisment', advertisment.id, 'view']">{{ advertisment.id }}</a></td>
+                    <td>{{ advertisment.description }}</td>
+                    <td>{{ advertisment.createAt | date:'mediumDate' }}</td>
+                    <td>{{ advertisment.modifiedAt | date:'mediumDate' }}</td>
+                    <td jhiTranslate="{{ 'jhipsterSampleApplicationApp.TypeAdvertisment.' + advertisment.typeAd }}">{{ advertisment.typeAd }}</td>
+                    <td jhiTranslate="{{ 'jhipsterSampleApplicationApp.PropertyType.' + advertisment.propertyType }}">{{ advertisment.propertyType }}</td>
+                    <td>{{ advertisment.active }}</td>
+                    <td>{{ advertisment.price }}</td>
+                    <td>{{ advertisment.reference }}</td>
+                    <td>
+                        {{ advertisment.user?.id }}
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/advertisment', advertisment.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/advertisment', advertisment.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(advertisment)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="advertisments && advertisments.length > 0">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        </div>
+    </div>
+</div>

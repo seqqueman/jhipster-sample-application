@@ -1,0 +1,9 @@
+{
+  "jhipsterSampleApplicationApp": {
+    "TypeAdvertisment": {
+      "null": "",
+      "FOR_RENT": "FOR_RENT",
+      "FOR_SELL": "FOR_SELL"
+    }
+  }
+}

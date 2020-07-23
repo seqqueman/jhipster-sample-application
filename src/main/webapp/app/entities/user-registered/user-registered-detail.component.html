@@ -1,0 +1,52 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="userRegistered">
+            <h2><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.detail.title">User Registered</span> {{ userRegistered.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.username">Username</span></dt>
+                <dd>
+                    <span>{{ userRegistered.username }}</span>
+                </dd>
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.advertiser">Advertiser</span></dt>
+                <dd>
+                    <span>{{ userRegistered.advertiser }}</span>
+                </dd>
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.phone">Phone</span></dt>
+                <dd>
+                    <span>{{ userRegistered.phone }}</span>
+                </dd>
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.numberOfAds">Number Of Ads</span></dt>
+                <dd>
+                    <span>{{ userRegistered.numberOfAds }}</span>
+                </dd>
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.user">User</span></dt>
+                <dd>
+                    {{ userRegistered.user?.id }}
+                </dd>
+                <dt><span jhiTranslate="jhipsterSampleApplicationApp.userRegistered.company">Company</span></dt>
+                <dd>
+                    <div *ngIf="userRegistered.company">
+                        <a [routerLink]="['/company', userRegistered.company?.id, 'view']">{{ userRegistered.company?.name }}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/user-registered', userRegistered.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
