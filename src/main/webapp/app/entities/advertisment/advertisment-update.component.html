@@ -1,0 +1,129 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-advertisment-heading" jhiTranslate="jhipsterSampleApplicationApp.advertisment.home.createOrEditLabel">Create or edit a Advertisment</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.description" for="field_description">Description</label>
+                    <input type="text" class="form-control" name="description" id="field_description"
+                           formControlName="description"/>
+                    <div *ngIf="editForm.get('description')!.invalid && (editForm.get('description')!.dirty || editForm.get('description')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('description')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.createAt" for="field_createAt">Create At</label>
+                    <div class="input-group">
+                        <input id="field_createAt" type="text" class="form-control" name="createAt" ngbDatepicker #createAtDp="ngbDatepicker" formControlName="createAt"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="createAtDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.modifiedAt" for="field_modifiedAt">Modified At</label>
+                    <div class="input-group">
+                        <input id="field_modifiedAt" type="text" class="form-control" name="modifiedAt" ngbDatepicker #modifiedAtDp="ngbDatepicker" formControlName="modifiedAt"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="modifiedAtDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.typeAd" for="field_typeAd">Type Ad</label>
+                    <select class="form-control" name="typeAd" formControlName="typeAd" id="field_typeAd">
+                        <option value="FOR_RENT">{{ 'jhipsterSampleApplicationApp.TypeAdvertisment.FOR_RENT' | translate }}</option>
+                        <option value="FOR_SELL">{{ 'jhipsterSampleApplicationApp.TypeAdvertisment.FOR_SELL' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('typeAd')!.invalid && (editForm.get('typeAd')!.dirty || editForm.get('typeAd')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('typeAd')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.propertyType" for="field_propertyType">Property Type</label>
+                    <select class="form-control" name="propertyType" formControlName="propertyType" id="field_propertyType">
+                        <option value="NEWDEVELOPMENT">{{ 'jhipsterSampleApplicationApp.PropertyType.NEWDEVELOPMENT' | translate }}</option>
+                        <option value="HOME">{{ 'jhipsterSampleApplicationApp.PropertyType.HOME' | translate }}</option>
+                        <option value="ROOM">{{ 'jhipsterSampleApplicationApp.PropertyType.ROOM' | translate }}</option>
+                        <option value="GARAGE">{{ 'jhipsterSampleApplicationApp.PropertyType.GARAGE' | translate }}</option>
+                        <option value="STORAGEROOM">{{ 'jhipsterSampleApplicationApp.PropertyType.STORAGEROOM' | translate }}</option>
+                        <option value="OFFICE">{{ 'jhipsterSampleApplicationApp.PropertyType.OFFICE' | translate }}</option>
+                        <option value="WAREHOUSE">{{ 'jhipsterSampleApplicationApp.PropertyType.WAREHOUSE' | translate }}</option>
+                        <option value="LAND">{{ 'jhipsterSampleApplicationApp.PropertyType.LAND' | translate }}</option>
+                        <option value="BUILDING">{{ 'jhipsterSampleApplicationApp.PropertyType.BUILDING' | translate }}</option>
+                    </select>
+                    <div *ngIf="editForm.get('propertyType')!.invalid && (editForm.get('propertyType')!.dirty || editForm.get('propertyType')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('propertyType')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.active" for="field_active">Active</label>
+                    <input type="checkbox" class="form-control" name="active" id="field_active"
+                           formControlName="active"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.price" for="field_price">Price</label>
+                    <input type="number" class="form-control" name="price" id="field_price"
+                           formControlName="price"/>
+                    <div *ngIf="editForm.get('price')!.invalid && (editForm.get('price')!.dirty || editForm.get('price')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('price')?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('price')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.reference" for="field_reference">Reference</label>
+                    <input type="text" class="form-control" name="reference" id="field_reference"
+                           formControlName="reference"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="jhipsterSampleApplicationApp.advertisment.user" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" formControlName="user">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id === editForm.get('user')!.value?.id ? editForm.get('user')!.value : userOption" *ngFor="let userOption of users; trackBy: trackById">{{ userOption.id }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "jhipsterSampleApplicationApp": {
+    "ViaType": {
+      "null": "",
+      "STREET": "STREET",
+      "SQUARE": "SQUARE",
+      "BOULEVARD": "BOULEVARD",
+      "ROAD": "ROAD"
+    }
+  }
+}

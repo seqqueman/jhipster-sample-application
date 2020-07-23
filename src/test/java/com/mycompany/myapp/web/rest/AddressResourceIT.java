@@ -1,0 +1,398 @@
+package com.mycompany.myapp.web.rest;
+
+import com.mycompany.myapp.JhipsterSampleApplicationApp;
+import com.mycompany.myapp.domain.Address;
+import com.mycompany.myapp.domain.Advertisment;
+import com.mycompany.myapp.repository.AddressRepository;
+import com.mycompany.myapp.repository.AdvertismentRepository;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.mycompany.myapp.domain.enumeration.ViaType;
+import com.mycompany.myapp.domain.enumeration.AreaDisctrict;
+/**
+ * Integration tests for the {@link AddressResource} REST controller.
+ */
+@SpringBootTest(classes = JhipsterSampleApplicationApp.class)
+@AutoConfigureMockMvc
+@WithMockUser
+public class AddressResourceIT {
+
+    private static final ViaType DEFAULT_TYPE_OF_VIA = ViaType.STREET;
+    private static final ViaType UPDATED_TYPE_OF_VIA = ViaType.SQUARE;
+
+    private static final String DEFAULT_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_NAME = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ZIP_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ZIP_CODE = "BBBBBBBBBB";
+
+    private static final AreaDisctrict DEFAULT_AREA_DISCTRICT = AreaDisctrict.WEST_BAY;
+    private static final AreaDisctrict UPDATED_AREA_DISCTRICT = AreaDisctrict.GEORGE_TOWN;
+
+    private static final BigDecimal DEFAULT_LAT = new BigDecimal(1);
+    private static final BigDecimal UPDATED_LAT = new BigDecimal(2);
+
+    private static final BigDecimal DEFAULT_LON = new BigDecimal(1);
+    private static final BigDecimal UPDATED_LON = new BigDecimal(2);
+
+    @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
+    private AdvertismentRepository advertismentRepository;
+
+    @Autowired
+    private EntityManager em;
+
+    @Autowired
+    private MockMvc restAddressMockMvc;
+
+    private Address address;
+
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Address createEntity(EntityManager em) {
+        Address address = new Address()
+            .typeOfVia(DEFAULT_TYPE_OF_VIA)
+            .name(DEFAULT_NAME)
+            .zipCode(DEFAULT_ZIP_CODE)
+            .areaDisctrict(DEFAULT_AREA_DISCTRICT)
+            .lat(DEFAULT_LAT)
+            .lon(DEFAULT_LON);
+        // Add required entity
+        Advertisment advertisment;
+        if (TestUtil.findAll(em, Advertisment.class).isEmpty()) {
+            advertisment = AdvertismentResourceIT.createEntity(em);
+            em.persist(advertisment);
+            em.flush();
+        } else {
+            advertisment = TestUtil.findAll(em, Advertisment.class).get(0);
+        }
+        address.setAdvertisment(advertisment);
+        return address;
+    }
+    /**
+     * Create an updated entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static Address createUpdatedEntity(EntityManager em) {
+        Address address = new Address()
+            .typeOfVia(UPDATED_TYPE_OF_VIA)
+            .name(UPDATED_NAME)
+            .zipCode(UPDATED_ZIP_CODE)
+            .areaDisctrict(UPDATED_AREA_DISCTRICT)
+            .lat(UPDATED_LAT)
+            .lon(UPDATED_LON);
+        // Add required entity
+        Advertisment advertisment;
+        if (TestUtil.findAll(em, Advertisment.class).isEmpty()) {
+            advertisment = AdvertismentResourceIT.createUpdatedEntity(em);
+            em.persist(advertisment);
+            em.flush();
+        } else {
+            advertisment = TestUtil.findAll(em, Advertisment.class).get(0);
+        }
+        address.setAdvertisment(advertisment);
+        return address;
+    }
+
+    @BeforeEach
+    public void initTest() {
+        address = createEntity(em);
+    }
+
+    @Test
+    @Transactional
+    public void createAddress() throws Exception {
+        int databaseSizeBeforeCreate = addressRepository.findAll().size();
+        // Create the Address
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isCreated());
+
+        // Validate the Address in the database
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeCreate + 1);
+        Address testAddress = addressList.get(addressList.size() - 1);
+        assertThat(testAddress.getTypeOfVia()).isEqualTo(DEFAULT_TYPE_OF_VIA);
+        assertThat(testAddress.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testAddress.getZipCode()).isEqualTo(DEFAULT_ZIP_CODE);
+        assertThat(testAddress.getAreaDisctrict()).isEqualTo(DEFAULT_AREA_DISCTRICT);
+        assertThat(testAddress.getLat()).isEqualTo(DEFAULT_LAT);
+        assertThat(testAddress.getLon()).isEqualTo(DEFAULT_LON);
+
+        // Validate the id for MapsId, the ids must be same
+        assertThat(testAddress.getId()).isEqualTo(testAddress.getAdvertisment().getId());
+    }
+
+    @Test
+    @Transactional
+    public void createAddressWithExistingId() throws Exception {
+        int databaseSizeBeforeCreate = addressRepository.findAll().size();
+
+        // Create the Address with an existing ID
+        address.setId(1L);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the Address in the database
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    public void updateAddressMapsIdAssociationWithNewId() throws Exception {
+        // Initialize the database
+        addressRepository.saveAndFlush(address);
+        int databaseSizeBeforeCreate = addressRepository.findAll().size();
+
+        // Add a new parent entity
+        Advertisment advertisment = AdvertismentResourceIT.createUpdatedEntity(em);
+        em.persist(advertisment);
+        em.flush();
+
+        // Load the address
+        Address updatedAddress = addressRepository.findById(address.getId()).get();
+        // Disconnect from session so that the updates on updatedAddress are not directly saved in db
+        em.detach(updatedAddress);
+
+        // Update the Advertisment with new association value
+        updatedAddress.setAdvertisment(advertisment);
+
+        // Update the entity
+        restAddressMockMvc.perform(put("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(updatedAddress)))
+            .andExpect(status().isOk());
+
+        // Validate the Address in the database
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeCreate);
+        Address testAddress = addressList.get(addressList.size() - 1);
+
+        // Validate the id for MapsId, the ids must be same
+        // Uncomment the following line for assertion. However, please note that there is a known issue and uncommenting will fail the test.
+        // Please look at https://github.com/jhipster/generator-jhipster/issues/9100. You can modify this test as necessary.
+        // assertThat(testAddress.getId()).isEqualTo(testAddress.getAdvertisment().getId());
+    }
+
+    @Test
+    @Transactional
+    public void checkTypeOfViaIsRequired() throws Exception {
+        int databaseSizeBeforeTest = addressRepository.findAll().size();
+        // set the field null
+        address.setTypeOfVia(null);
+
+        // Create the Address, which fails.
+
+
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = addressRepository.findAll().size();
+        // set the field null
+        address.setName(null);
+
+        // Create the Address, which fails.
+
+
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkZipCodeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = addressRepository.findAll().size();
+        // set the field null
+        address.setZipCode(null);
+
+        // Create the Address, which fails.
+
+
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkAreaDisctrictIsRequired() throws Exception {
+        int databaseSizeBeforeTest = addressRepository.findAll().size();
+        // set the field null
+        address.setAreaDisctrict(null);
+
+        // Create the Address, which fails.
+
+
+        restAddressMockMvc.perform(post("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void getAllAddresses() throws Exception {
+        // Initialize the database
+        addressRepository.saveAndFlush(address);
+
+        // Get all the addressList
+        restAddressMockMvc.perform(get("/api/addresses?sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(address.getId().intValue())))
+            .andExpect(jsonPath("$.[*].typeOfVia").value(hasItem(DEFAULT_TYPE_OF_VIA.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].zipCode").value(hasItem(DEFAULT_ZIP_CODE)))
+            .andExpect(jsonPath("$.[*].areaDisctrict").value(hasItem(DEFAULT_AREA_DISCTRICT.toString())))
+            .andExpect(jsonPath("$.[*].lat").value(hasItem(DEFAULT_LAT.intValue())))
+            .andExpect(jsonPath("$.[*].lon").value(hasItem(DEFAULT_LON.intValue())));
+    }
+    
+    @Test
+    @Transactional
+    public void getAddress() throws Exception {
+        // Initialize the database
+        addressRepository.saveAndFlush(address);
+
+        // Get the address
+        restAddressMockMvc.perform(get("/api/addresses/{id}", address.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.id").value(address.getId().intValue()))
+            .andExpect(jsonPath("$.typeOfVia").value(DEFAULT_TYPE_OF_VIA.toString()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+            .andExpect(jsonPath("$.zipCode").value(DEFAULT_ZIP_CODE))
+            .andExpect(jsonPath("$.areaDisctrict").value(DEFAULT_AREA_DISCTRICT.toString()))
+            .andExpect(jsonPath("$.lat").value(DEFAULT_LAT.intValue()))
+            .andExpect(jsonPath("$.lon").value(DEFAULT_LON.intValue()));
+    }
+    @Test
+    @Transactional
+    public void getNonExistingAddress() throws Exception {
+        // Get the address
+        restAddressMockMvc.perform(get("/api/addresses/{id}", Long.MAX_VALUE))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    public void updateAddress() throws Exception {
+        // Initialize the database
+        addressRepository.saveAndFlush(address);
+
+        int databaseSizeBeforeUpdate = addressRepository.findAll().size();
+
+        // Update the address
+        Address updatedAddress = addressRepository.findById(address.getId()).get();
+        // Disconnect from session so that the updates on updatedAddress are not directly saved in db
+        em.detach(updatedAddress);
+        updatedAddress
+            .typeOfVia(UPDATED_TYPE_OF_VIA)
+            .name(UPDATED_NAME)
+            .zipCode(UPDATED_ZIP_CODE)
+            .areaDisctrict(UPDATED_AREA_DISCTRICT)
+            .lat(UPDATED_LAT)
+            .lon(UPDATED_LON);
+
+        restAddressMockMvc.perform(put("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(updatedAddress)))
+            .andExpect(status().isOk());
+
+        // Validate the Address in the database
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeUpdate);
+        Address testAddress = addressList.get(addressList.size() - 1);
+        assertThat(testAddress.getTypeOfVia()).isEqualTo(UPDATED_TYPE_OF_VIA);
+        assertThat(testAddress.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testAddress.getZipCode()).isEqualTo(UPDATED_ZIP_CODE);
+        assertThat(testAddress.getAreaDisctrict()).isEqualTo(UPDATED_AREA_DISCTRICT);
+        assertThat(testAddress.getLat()).isEqualTo(UPDATED_LAT);
+        assertThat(testAddress.getLon()).isEqualTo(UPDATED_LON);
+    }
+
+    @Test
+    @Transactional
+    public void updateNonExistingAddress() throws Exception {
+        int databaseSizeBeforeUpdate = addressRepository.findAll().size();
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restAddressMockMvc.perform(put("/api/addresses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(address)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the Address in the database
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    public void deleteAddress() throws Exception {
+        // Initialize the database
+        addressRepository.saveAndFlush(address);
+
+        int databaseSizeBeforeDelete = addressRepository.findAll().size();
+
+        // Delete the address
+        restAddressMockMvc.perform(delete("/api/addresses/{id}", address.getId())
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
+
+        // Validate the database contains one less item
+        List<Address> addressList = addressRepository.findAll();
+        assertThat(addressList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+}

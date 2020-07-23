@@ -1,0 +1,91 @@
+{
+  "name": "Advertisment",
+  "fields": [
+    {
+      "fieldName": "description",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "createAt",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "modifiedAt",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "typeAd",
+      "fieldType": "TypeAdvertisment",
+      "fieldValues": "FOR_RENT,FOR_SELL",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "propertyType",
+      "fieldType": "PropertyType",
+      "fieldValues": "NEWDEVELOPMENT,HOME,ROOM,GARAGE,STORAGEROOM,OFFICE,WAREHOUSE,LAND,BUILDING",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "reference",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "advertisment",
+      "relationshipName": "image"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "advertisment",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "address",
+      "otherEntityRelationshipName": "advertisment",
+      "relationshipName": "address",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "feature",
+      "otherEntityRelationshipName": "advertisment",
+      "relationshipName": "feature",
+      "ownerSide": false
+    }
+  ],
+  "changelogDate": "20200723154553",
+  "entityTableName": "advertisment",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
